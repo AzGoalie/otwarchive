@@ -24,6 +24,14 @@ FactoryBot.define do
       commentable { create(:work, moderated_commenting_enabled: true).last_posted_chapter }
       unreviewed { true }
     end
+
+    trait :on_non_chaptered_work do
+      commentable { create(:work) }
+    end
+
+    trait :on_multi_chaptered_work do
+      commentable { create(:work, :with_chapter_title).last_posted_chapter }
+    end
   end
 
   factory :inbox_comment do

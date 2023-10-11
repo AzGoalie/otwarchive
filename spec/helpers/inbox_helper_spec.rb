@@ -26,9 +26,30 @@ describe InboxHelper do
     end
 
     context "for Works" do
-      it "should return a link to the Comment on the Work" do
-        @commentable = FactoryBot.create(:comment)
-        expect(commentable_description_link(@commentable)).to eq "<a href=\"/works/#{@commentable.ultimate_parent.id}/comments/#{@commentable.id}\">#{@commentable.ultimate_parent.title}</a>"
+      context "with chapters" do
+        it "returns two links to the Comment on the Work and the Chapter" do
+          @commentable = FactoryBot.create(:comment, :on_multi_chaptered_work)
+          chapter = @commentable.original_ultimate_parent
+
+          work_link = "<a href=\"/works/#{@commentable.ultimate_parent.id}/comments/#{@commentable.id}\">#{@commentable.ultimate_parent.title}</a>"
+          chapter_link = "<a href=\"/works/#{@commentable.ultimate_parent.id}/chapters/#{chapter.id}\">#{chapter.title}</a>"
+
+          expect(commentable_description_link(@commentable)).to eq chapter_link + " #{ts('of')} " + work_link
+        end
+
+        context("chapter title is blank") do
+          it "returns a link to the Comment on the Work" do
+            @commentable = FactoryBot.create(:comment)
+            expect(commentable_description_link(@commentable)).to eq "<a href=\"/works/#{@commentable.ultimate_parent.id}/comments/#{@commentable.id}\">#{@commentable.ultimate_parent.title}</a>"
+          end
+        end
+      end
+
+      context "without chapters" do
+        it "should return a link to the Comment on the Work with chapters" do
+          @commentable = FactoryBot.create(:comment, :on_non_chaptered_work)
+          expect(commentable_description_link(@commentable)).to eq "<a href=\"/works/#{@commentable.ultimate_parent.id}/comments/#{@commentable.id}\">#{@commentable.ultimate_parent.title}</a>"
+        end
       end
     end
   end

@@ -21,6 +21,10 @@ FactoryBot.define do
       end
     end
 
+    trait :with_chapter_title do
+      chapter_attributes { { **chapter_info, title: "Test Chapter" } }
+    end
+
     factory :no_authors do
       authors { [] }
     end
